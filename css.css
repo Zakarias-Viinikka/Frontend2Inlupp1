@@ -1,0 +1,87 @@
+body {
+  margin: none;
+  padding: none;
+  height: 100vh;
+  width: 100vw;
+  color: black;
+}
+#background-image {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  height: 250%;
+  background-image: url("background.jpg"); /* https://unsplash.com/photos/T4F4f056wBs */
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  z-index: -1;
+}
+#container {
+  height: 98vh;
+}
+.title {
+  text-align: center;
+}
+#products {
+  position: relative;
+  height: calc(100% - 58px - 38px);
+  overflow-y: scroll;
+  background-color: rgba(255,255,255,0.8);
+  border: 1px black solid;
+}
+.product {
+  border: 1px black solid;
+  padding-bottom: 10px;
+  width: 900px;
+}
+
+#buyButtonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#imgContainer {
+  height: 200px;
+}
+
+.productImage {
+  max-height: 200px;
+  display: block;
+  margin: auto;
+  border: 1px black solid;
+}
+
+.title  {
+  color: black;
+  -webkit-text-stroke: 0.5px white; /* width and color */
+}
+
+.menu {
+  background-color: rgba(255,255,255,0.8);
+  border: 1px black solid;
+}
+
+.nav-item {
+  text-shadow: none;
+}
+
+.nav-item:Hover {
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+form {
+  height: 500px;
+  border: 1px black solid;
+}
+
+.sampleRecipe {
+  height: 500px;
+  border: 1px black solid;
+}
+
+.receipt {
+  border: 1px black solid;
+  text-align: center;
+  margin: auto;
+}
