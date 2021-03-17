@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <title>Inlupp 1</title>
+  <link rel="stylesheet" type="text/css" href="css.css">
+</head>
+<body>
+  <div id="background-image"></div>
+
+  <div id="container" class="container">
+    <div class="row">
+      <div class="col-sm title"><h2>Kassa</h2></div> <br><br>
+    </div>
+    <div class="row menu">
+      <nav class="navbar navbar-expand-lg">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Startsida</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="checkout.html">Kassa</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="shoppingCart.html">Till Varukorg (<span id="amntOfProducts"></span>)</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+      <!--När en kund klickar på Köp-knappen så kommer man till en beställningssida.
+Du ska alltså skapa en beställningssida som innehåller ett beställningsformulär.
+Visa info om den valda produkten högst upp på sidan.
+Kunden behöver ange namn, telefon, e-post och leveransadress.
+Validera alla fält med JavaScript. Visa lämpliga felmeddelanden -->
+<div class="row" id="products">
+  <div class="col">
+    <div class="form-group">
+      <label for="InputName" id="errorName">Namn</label>
+      <input type="name" class="form-control" id="InputName" placeholder="John Doe">
+    </div>
+    <div class="form-group">
+      <label for="InputEmail" id="errorEmail">Email address</label>
+      <input type="email" class="form-control" id="InputEmail" aria-describedby="emailHelp" placeholder="zakariasviinikka@yh.nackademin.se">
+      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+    <div class="form-group">
+      <label for="InputTelephone"  id="errorTelephone">Telefon</label>
+      <input type="telephone" class="form-control" id="InputTelephone" placeholder="0700454515">
+    </div>
+    <div class="form-group">
+      <label for="InputAddress"  id="errorAddress">Leverans Adress</label>
+      <input type="address" class="form-control" id="InputAddress" placeholder="kvarnhagsgatan 126">
+    </div>
+    <button  id="pay" class="btn btn-primary">Betala</button>
+  </div>
+</div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!-- my scripts -->
+<script src="fetchUrl.js"></script>
+<script src="shoppingCart.js"></script>
+<script src="products.js"></script>
+<script src="person.js"></script>
+<script>
+  let shoppingCart = new ShoppingCart(JSON.parse(localStorage.getItem('shoppingCart')));
+  let productsList = new Products();
+  updateUrlShoppingCart();
+
+  fetch(getUrl())
+  .then(json=>fetchSucessful(json))
+  .catch(err => console.error(err));
+
+  function fetchSucessful(products) {
+    $(products).each(function() {
+      productsList.products[this.id] = this;
+    });
+    showCart();
+  }
+
+  function showCart() {
+    let sampleReceipt = "<div class='col-md-4 sampleRecipe'> Varukorg:<br><br>"
+    shoppingCart.shoppingCart.forEach( (item) => {
+      if (item != null) {
+        sampleReceipt += `${item.title}: ${item.amount} x ${item.price}kr </br><br>`
+      }
+    });
+    sampleReceipt += "</div>";   
+          //console.log(sampleReceipt) 
+          $('#products').append(sampleReceipt);
+        }
+
+        function addToCart(id) {
+          shoppingCart.addItem(productsList.getProduct(id));
+          updateUrlShoppingCart();
+          updateHtmlAmountInCart(id);
+          updateLocalStorage();
+        }
+
+        function removeFromCart(id) {
+          if (shoppingCart.removeItem(id) == "removeItem") {
+            document.getElementById(id).remove();
+            console.log("remove");
+          } else {
+            //otherwise the box doesnt dissapear
+            updateHtmlAmountInCart(id);
+          }
+          updateUrlShoppingCart();
+          updateLocalStorage();
+        }
+
+        //updates Varukorg(x) 
+        function updateUrlShoppingCart() {
+          $('#amntOfProducts').text(shoppingCart.itemsInCart());
+        }
+
+        function updateLocalStorage() {
+          localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart.shoppingCart));
+        }
+
+        //updates the amount of selected items for purchase in the html view
+        function updateHtmlAmountInCart(id) {
+          document.getElementById("amount"+id).innerHTML = shoppingCart.shoppingCart[shoppingCart.getCartItemId(id)].amount; 
+        }
+
+        //empty shopping cart
+        function emptyCart() {
+          shoppingCart = new ShoppingCart();
+          updateLocalStorage();
+          updateUrlShoppingCart();
+          location.reload() //reloading page since I'm lazy
+        }
+
+        $("#pay").click(showReceipt); 
+        
+        function showReceipt() {
+          document.getElementById("errorName").innerHTML = "Namn";
+          document.getElementById("errorEmail").innerHTML = "Email address";
+          document.getElementById("errorTelephone").innerHTML = "Telefon";
+          document.getElementById("errorAddress").innerHTML = "Leverans Adress";
+
+
+          let name = $("#InputName").val();
+          let email = $("#InputEmail").val();
+          let telephone = $("#InputTelephone").val();
+          let address = $("#InputAddress").val();
+          let formError = validateForm(name, email, telephone, address);
+          if (formError == "validForm") {
+            let person = new Person(name, email, telephone, address);
+            console.log(person);
+            let receipt = shoppingCart.getReceipt(person);
+            console.log(receipt);
+            $("#products").html(receipt);
+            //delLocalStorage();
+          } else {
+            document.getElementById(formError[0]).innerHTML = "<span style='color:red'>"+formError[1]+"</span>";
+          }
+        }
+
+        function delLocalStorage() {
+          localStorage.clear();
+        }
+
+        function validateForm(name, email, telephone, address) {
+          if (!isNaN(parseInt(name)) || name == "") {
+            return ["errorName", "Namn måste innehålla bokstäver"];
+          } 
+          else if (!validateEmail(email)) {
+            return ["errorEmail", "Ogiltig email"];
+          } else if (telephone == "" || !(telephone.length >= 7  && telephone.length <= 12)) {
+            return ["errorTelephone", "Telefonnummer måste vara mellan 7 och 12 siffor"];
+          } else if (isNaN(parseInt(telephone))) {
+            return ["errorTelephone", "Telefonnummer får endast innehålla siffror"];
+          } else if(  address.length < 4) {
+            return ["errorAddress", "adress är för kort"];
+          }
+          else {
+            return "validForm";
+          }
+        }
+
+        function validateEmail(email) {
+          const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+          return re.test(String(email).toLowerCase());
+        }
+
+      </script>
+    </body>
+    </html>
